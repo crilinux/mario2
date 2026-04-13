@@ -75,3 +75,20 @@ LEVEL_2_THEME = "castle"
 UI_FONT_SIZE = 24
 UI_HEALTH_BAR_WIDTH = 200
 UI_HEALTH_BAR_HEIGHT = 20
+
+# 音效通道
+SFX_CHANNEL_JUMP = 0
+SFX_CHANNEL_ATTACK = 1
+SFX_CHANNEL_HIT = 2
+SFX_CHANNEL_COIN = 3
+SFX_CHANNEL_BOSS_HIT = 4
+
+# 音效文件路径 (需要在assets/sounds目录下放置对应文件)
+SFX_JUMP = "assets/sounds/jump.wav"
+SFX_ATTACK = "assets/sounds/attack.wav"
+SFX_HIT = "assets/sounds/hit.wav"
+SFX_COIN = "assets/sounds/coin.wav"
+SFX_BOSS_HIT = "assets/sounds/boss_hit.wav"
+SFX_BOSS_DEFEAT = "assets/sounds/boss_defeat.wav"
+SFX_LEVEL_COMPLETE = "assets/sounds/level_complete.wav"
+SFX_GAME_OVER = "assets/sounds/game_over.wav"

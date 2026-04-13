@@ -6,7 +6,7 @@ from constants import *
 
 class Boss(pygame.sprite.Sprite):
     """Boss基类"""
-    def __init__(self, x, y, boss_id=1):
+    def __init__(self, x, y, boss_id=1, game=None):
         super().__init__()
         self.boss_id = boss_id
         self.width = BOSS1_WIDTH if boss_id == 1 else BOSS2_WIDTH
@@ -155,6 +155,10 @@ class Boss(pygame.sprite.Sprite):
     def take_damage(self):
         """受到伤害"""
         self.health -= 1
+        # 播放Boss受击音效
+        if hasattr(self, "game") and self.game and "boss_hit" in self.game.sounds:
+        print("DEBUG: Playing boss hit sound")
+            self.game.sounds["boss_hit"].play()
         if self.health <= 0:
             self.die()
         return self.health <= 0

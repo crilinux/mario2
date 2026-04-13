@@ -38,6 +38,10 @@ class Game:
         
         # 子弹
         self.projectiles = pygame.sprite.Group()
+        # 初始化音效系统
+        pygame.mixer.init()
+        self.sounds = {}
+        self._load_sounds()
         self.player_attacks = pygame.sprite.Group()
         
         # UI
@@ -48,6 +52,26 @@ class Game:
         self.lives = 3
         self.score = 0
         self.game_over_reason = ""
+    
+    def _load_sounds(self):
+        """加载音效""" 
+        try:
+            self.sounds["jump"] = pygame.mixer.Sound(SFX_JUMP)
+            self.sounds["attack"] = pygame.mixer.Sound(SFX_ATTACK)
+            self.sounds["hit"] = pygame.mixer.Sound(SFX_HIT)
+            self.sounds["coin"] = pygame.mixer.Sound(SFX_COIN)
+            self.sounds["boss_hit"] = pygame.mixer.Sound(SFX_BOSS_HIT)
+            self.sounds["boss_defeat"] = pygame.mixer.Sound(SFX_BOSS_DEFEAT)
+            self.sounds["level_complete"] = pygame.mixer.Sound(SFX_LEVEL_COMPLETE)
+            self.sounds["game_over"] = pygame.mixer.Sound(SFX_GAME_OVER)
+            
+            # 设置音量
+            for sound in self.sounds.values():
+                sound.set_volume(0.5)
+        except:
+            # 如果音效文件不存在，创建静音音效
+            self.sounds = {}
+            print("Warning: Sound files not found, continuing without sound")
         
     def start_game(self):
         """开始游戏"""
@@ -63,7 +87,7 @@ class Game:
         """生成玩家"""
         if self.current_level:
             start_pos = self.current_level.get_player_start()
-            self.player = Player(start_pos[0], start_pos[1])
+            self.player = Player(start_pos[0], start_pos[1], self)
             self.player_group.empty()
             self.player_group.add(self.player)
     
@@ -160,7 +184,7 @@ class Game:
         """开始Boss战"""
         if self.current_level.boss_pos:
             boss_id = self.level_manager.level_id
-            self.boss = Boss(self.current_level.boss_pos[0], self.current_level.boss_pos[1], boss_id)
+            self.boss = Boss(self.current_level.boss_pos[0], self.current_level.boss_pos[1], boss_id, self)
             self.boss_room = BossRoom(self.boss)
             self.boss_room.activate()
             self.state = STATE_BOSS_FIGHT
@@ -203,6 +227,14 @@ class Game:
         # 检查Boss死亡
         if self.boss and not self.boss.is_alive:
             self.boss_room.complete()
+            # 播放Boss击败音效
+            if "boss_defeat" in self.sounds:
+            print("DEBUG: Playing boss defeat sound")
+                self.sounds["boss_defeat"].play()
+            # 播放关卡完成音效
+            if "level_complete" in self.sounds:
+            print("DEBUG: Playing level complete sound")
+                self.sounds["level_complete"].play()
             self.score += 1000
             self._next_level()
         
@@ -221,6 +253,10 @@ class Game:
         else:
             self.state = STATE_GAME_OVER
             self.game_over_reason = "Game Over"
+            # 播放游戏结束音效
+            if "game_over" in self.sounds:
+            print("DEBUG: Playing game over sound")
+                self.sounds["game_over"].play()
     
     def _next_level(self):
         """下一关"""

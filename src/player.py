@@ -5,8 +5,9 @@ from constants import *
 
 class Player(pygame.sprite.Sprite):
     """玩家角色"""
-    def __init__(self, x, y):
+    def __init__(self, x, y, game=None):
         super().__init__()
+        self.game = game
         self.width = PLAYER_WIDTH
         self.height = PLAYER_HEIGHT
         self.image = self._create_sprite()
@@ -138,6 +139,10 @@ class Player(pygame.sprite.Sprite):
                 self.has_double_jumped = False
             elif self.velocity.y < 0:
                 self.rect.top = platform.rect.bottom
+                # 播放撞击问号箱音效
+                if self.game and "coin" in self.game.sounds:
+                print("DEBUG: Playing coin sound")
+                    self.game.sounds["coin"].play()
                 self.velocity.y = 0
     
     def _constrain_to_screen(self):
@@ -160,9 +165,17 @@ class Player(pygame.sprite.Sprite):
         """跳跃"""
         if self.on_ground:
             self.velocity.y = JUMP_STRENGTH
+            # 播放跳跃音效
+            if self.game and "jump" in self.game.sounds:
+                print("DEBUG: Playing jump sound")
+                self.game.sounds["jump"].play()
             self.on_ground = False
         elif self.can_double_jump and not self.has_double_jumped:
             self.velocity.y = JUMP_STRENGTH
+            # 播放跳跃音效
+            if self.game and "jump" in self.game.sounds:
+                print("DEBUG: Playing jump sound")
+                self.game.sounds["jump"].play()
             self.has_double_jumped = True
     
     def attack(self):
@@ -170,6 +183,10 @@ class Player(pygame.sprite.Sprite):
         if self.attack_cooldown == 0:
             self.is_attacking = True
             self.attack_cooldown = 30
+            # 播放攻击音效
+            if "attack" in self.game.sounds:
+                print("DEBUG: Playing attack sound")
+                self.game.sounds["attack"].play()
             return True
         return False
     
@@ -177,6 +194,10 @@ class Player(pygame.sprite.Sprite):
         """受到伤害"""
         if not self.invincible:
             self.health -= 1
+            # 播放受击音效
+            if self.game and "hit" in self.game.sounds:
+                print("DEBUG: Playing hit sound")
+                self.game.sounds["hit"].play()
             self.invincible = True
             self.invincible_timer = 60  # 1秒无敌
             if self.health <= 0:
